@@ -1,15 +1,22 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function NewPostPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [titleError, setTitleError] = useState("");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
+
+    if (title.trim() === "") {
+      setTitleError("제목을 입력해주세요.");
+      return;
+    }
+
     alert("저장되었습니다");
     router.push("/posts");
   };
@@ -30,11 +37,16 @@ export default function NewPostPage() {
             id="title"
             type="text"
             value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            onChange={(event) => {
+              setTitle(event.target.value);
+              if (titleError) setTitleError("");
+            }}
             placeholder="제목을 입력하세요"
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-gray-900"
-            required
           />
+          {titleError && (
+            <p className="text-red-500 text-sm">{titleError}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -48,7 +60,6 @@ export default function NewPostPage() {
             placeholder="내용을 입력하세요"
             rows={8}
             className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-gray-900"
-            required
           />
         </div>
 

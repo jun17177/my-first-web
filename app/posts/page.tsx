@@ -1,23 +1,29 @@
-import Link from "next/link";
-import { posts } from "@/lib/posts";
+import { Post } from "@/lib/posts";
+import PostsList from "./PostsList";
 
-export default function PostsPage() {
+type JSONPlaceholderPost = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};
+
+export default async function PostsPage() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
+  const data: JSONPlaceholderPost[] = await res.json();
+
+  const posts: Post[] = data.map((item) => ({
+    id: item.id,
+    title: item.title,
+    content: item.body,
+    author: `User ${item.userId}`,
+    date: "—",
+  }));
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">게시글 목록</h1>
-      <div className="space-y-4">
-        {posts.map((post) => (
-          <Link key={post.id} href={`/posts/${post.id}`}>
-            <div className="border rounded-lg p-4 hover:shadow-md transition cursor-pointer">
-              <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
-              <p className="text-gray-600 text-sm mb-2 line-clamp-2">{post.content}</p>
-              <p className="text-gray-400 text-xs">
-                {post.author} · {post.date}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <PostsList initialPosts={posts} />
     </div>
   );
 }
