@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "내 블로그",
@@ -13,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={cn("font-sans", geist.variable)}>
       <body className="bg-gray-50 text-gray-900">
         <nav className="border-b border-gray-200 bg-white/90 backdrop-blur">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
