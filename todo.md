@@ -48,3 +48,16 @@
 
 ## 진행률: 4/29 (14%)
 ## 5/6 (14%)
+
+## Ch9: Supabase Auth
+
+- [x] lib/auth.ts — signInWithEmail, signUpWithEmail, signOut
+- [x] app/login/page.tsx
+- [x] app/signup/page.tsx
+- [x] contexts/AuthContext.tsx — AuthProvider + useAuth
+- [x] components/HeaderNav.tsx — 헤더 로그인/로그아웃 UI
+- [x] app/layout.tsx — AuthProvider 연결
+- [x] proxy.ts — /posts/new 보호 라우트
+- [x] npm run build 통과
+- [ ] 브라우저 시나리오 ②~⑥ 검증
+- [ ] Vercel 배포 확인
