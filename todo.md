@@ -6,18 +6,18 @@
 - [x] CLAUDE.md 작성
 - [x] context.md 작성
 - [x] todo.md 작성
-- [ ] npx create-next-app@latest 프로젝트 생성
-- [ ] 설계 문서 4종 프로젝트 루트에 복사
-- [ ] GitHub 저장소 생성 + 연결
-- [ ] Vercel 연동
+- [x] npx create-next-app@latest 프로젝트 생성
+- [x] 설계 문서 4종 프로젝트 루트에 복사
+- [x] GitHub 저장소 생성 + 연결
+- [x] Vercel 연동
 
 ## 2단계: 데이터 + 공통 컴포넌트 (Ch7~8)
 
 - [ ] lib/drivers.ts — Driver interface + 드라이버 20명 배열
 - [ ] lib/teams.ts — Team interface + 팀 10개 배열
 - [ ] lib/races.ts — Race interface + 2025 레이스 일정 배열
-- [ ] app/globals.css — @import "tailwindcss" 설정
-- [ ] app/layout.tsx — Header + main + Footer 공통 레이아웃
+- [x] app/globals.css — @import "tailwindcss" 설정
+- [x] app/layout.tsx — Header + main + Footer 공통 레이아웃
 - [ ] components/Header.tsx — 검정 배경 nav + Link 5개
 - [ ] components/Footer.tsx — 검정 배경 푸터
 
@@ -46,8 +46,7 @@
 - [ ] git push → Vercel 배포 확인
 - [ ] 배포 URL 제출
 
-## 진행률: 4/29 (14%)
-## 5/6 (14%)
+## 진행률: 10/29 (34%)
 
 ## Ch9: Supabase Auth
 
