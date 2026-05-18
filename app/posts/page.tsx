@@ -1,29 +1,29 @@
-import { Post } from "@/lib/posts";
+"use client";
+
+import { useEffect, useState } from "react";
+import type { Post } from "@/lib/posts";
+import { getPosts } from "@/lib/supabase/posts";
 import PostsList from "./PostsList";
 
-type JSONPlaceholderPost = {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-};
+export default function PostsPage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function PostsPage() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=10");
-  const data: JSONPlaceholderPost[] = await res.json();
-
-  const posts: Post[] = data.map((item) => ({
-    id: item.id,
-    title: item.title,
-    content: item.body,
-    author: `User ${item.userId}`,
-    date: "—",
-  }));
+  useEffect(() => {
+    getPosts().then(({ data }) => {
+      if (data) setPosts(data);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">게시글 목록</h1>
-      <PostsList initialPosts={posts} />
+      {loading ? (
+        <p className="text-gray-500 text-sm">불러오는 중...</p>
+      ) : (
+        <PostsList initialPosts={posts} />
+      )}
     </div>
   );
 }

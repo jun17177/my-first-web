@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Post } from "@/lib/posts";
+import type { Post } from "@/lib/posts";
+import { deletePost } from "@/lib/supabase/posts";
+import { useAuth } from "@/contexts/AuthContext";
 import SearchBar from "./SearchBar";
 
 type Props = {
@@ -12,14 +14,18 @@ type Props = {
 export default function PostsList({ initialPosts }: Props) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [query, setQuery] = useState("");
+  const { user } = useAuth();
 
   const filteredPosts = posts.filter((post) =>
     post.title.toLowerCase().includes(query.toLowerCase())
   );
 
-  function handleDelete(id: number) {
+  async function handleDelete(id: string) {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    setPosts(posts.filter((post) => post.id !== id));
+    const { error } = await deletePost(id);
+    if (!error) {
+      setPosts(posts.filter((post) => post.id !== id));
+    }
   }
 
   return (
@@ -39,19 +45,19 @@ export default function PostsList({ initialPosts }: Props) {
             >
               <Link href={`/posts/${post.id}`} className="flex-1 min-w-0">
                 <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
-                <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                  {post.content}
-                </p>
+                <p className="text-gray-600 text-sm mb-2 line-clamp-2">{post.content}</p>
                 <p className="text-gray-400 text-xs">
-                  {post.author} · {post.date}
+                  {new Date(post.created_at).toLocaleDateString("ko-KR")}
                 </p>
               </Link>
-              <button
-                onClick={() => handleDelete(post.id)}
-                className="shrink-0 text-sm text-red-500 hover:text-red-700 transition"
-              >
-                삭제
-              </button>
+              {user?.id === post.user_id && (
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  className="shrink-0 text-sm text-red-500 hover:text-red-700 transition"
+                >
+                  삭제
+                </button>
+              )}
             </div>
           ))}
         </div>
