@@ -2,10 +2,10 @@
 
 ## 현재 상태
 
-- 마지막 작업일: 2026-04-29
-- 완료된 작업: 설계 문서 작성 (ARCHITECTURE.md, CLAUDE.md, todo.md, context.md)
-- 진행 중: 없음 (구현 시작 전)
-- 미착수: 전체 구현 (todo.md 1단계부터)
+- 마지막 작업일: 2026-05-20
+- 완료된 작업: Ch9 Supabase Auth, Ch10 posts CRUD (Supabase 연동)
+- 진행 중: Ch11 RLS (posts 테이블 Row Level Security 적용)
+- 미착수: RLS 마이그레이션 생성 및 push, 우회 테스트, 빌드/배포 검증
 
 ## 기술 결정 사항
 
@@ -36,3 +36,17 @@
 - Supabase 무료 플랜 7일 미사용 시 자동 일시 정지
 - .env.local anon key 앞뒤 공백 주의
 - 브라우저 확장(비밀번호 관리자) → body에 suppressHydrationWarning으로 경고 제거
+
+## Ch10 추가 사항 (2026-05-20)
+
+- posts CRUD 완료: 목록 조회, 상세 조회, 작성, 수정, 삭제
+- lib/supabase/posts.ts — getPosts, getPost, createPost, updatePost, deletePost
+- 작성자 UI 분기: user.id === post.user_id일 때만 수정/삭제 버튼 표시 (UX 전용, 보안 아님)
+- 기존 마이그레이션: supabase/migrations/20260504045416_create_tables.sql (profiles + posts 테이블)
+
+## Ch11 추가 사항 (진행 중)
+
+- RLS 적용 대상: posts 테이블
+- 마이그레이션 방식: npx supabase migration new → db push (SQL Editor 직접 실행 금지)
+- 보안 원칙: 클라이언트 UI 분기는 UX, 실제 보안은 RLS가 담당
+- service_role 키는 클라이언트(.env.local NEXT_PUBLIC_* 포함) 어디에도 사용 금지

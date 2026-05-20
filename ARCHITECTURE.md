@@ -60,8 +60,22 @@ Next.js App Router + TypeScript + Tailwind CSS 4 기반.
 
 ```
 app/
-├── layout.tsx              # 공통 레이아웃 — Header + main + Footer
+├── layout.tsx              # 공통 레이아웃 — Header + main + Footer + AuthProvider
 ├── page.tsx                # 홈 — Server Component
+├── login/
+│   └── page.tsx            # 로그인 — Client Component
+├── signup/
+│   └── page.tsx            # 회원가입 — Client Component
+├── posts/
+│   ├── page.tsx            # 게시글 목록 — Client Component (Supabase select)
+│   ├── PostsList.tsx       # 목록 컴포넌트 (작성자 UI 분기)
+│   ├── SearchBar.tsx       # 검색 컴포넌트
+│   ├── new/
+│   │   └── page.tsx        # 게시글 작성 — Client Component (Supabase insert)
+│   └── [id]/
+│       ├── page.tsx        # 게시글 상세 — Client Component (Supabase select)
+│       └── edit/
+│           └── page.tsx    # 게시글 수정 — Client Component (Supabase update)
 ├── drivers/
 │   └── page.tsx            # 드라이버 목록 — Client Component (팀 필터 useState)
 ├── teams/
@@ -73,17 +87,34 @@ app/
 
 components/
 ├── Header.tsx              # 검정 배경 nav, Link 5개 — Server Component
+├── HeaderNav.tsx           # 로그인/로그아웃 UI — Client Component
 ├── Footer.tsx              # 검정 배경 푸터 — Server Component
+├── PostForm.tsx            # 게시글 작성/수정 폼 — Client Component
 ├── DriverCard.tsx          # 드라이버 카드 (팀 컬러 라인 prop) — Server Component
 ├── TeamCard.tsx            # 팀 카드 (팀 컬러 라인 prop) — Server Component
 ├── DriverFilter.tsx        # 팀별 필터 버튼 그룹 — Client Component (useState)
 ├── RaceTable.tsx           # 레이스 테이블 + 필터 — Client Component (useState)
 └── ReviewForm.tsx          # 의견 작성 폼 + 목록 — Client Component (useState + useEffect)
 
+contexts/
+└── AuthContext.tsx         # AuthProvider + useAuth — 세션 전역 공유
+
 lib/
+├── auth.ts                 # signInWithEmail, signUpWithEmail, signOut
+├── supabase/
+│   ├── client.ts           # createBrowserClient (anon key만 사용)
+│   └── posts.ts            # getPosts, getPost, createPost, updatePost, deletePost
+├── posts.ts                # Post 타입 정의
 ├── drivers.ts              # 드라이버 20명 정적 데이터 배열
 ├── teams.ts                # 팀 10개 정적 데이터 배열
 └── races.ts                # 2025 레이스 일정 정적 데이터 배열
+
+supabase/
+└── migrations/
+    ├── 20260504045416_create_tables.sql   # profiles + posts 테이블 생성
+    └── <timestamp>_add_posts_rls.sql      # Ch11: posts RLS 정책 (예정)
+
+proxy.ts                    # /posts/new 보호 라우트 (Next.js 16 proxy)
 ```
 
 ### 컴포넌트별 상세 설명
@@ -225,13 +256,87 @@ interface Review {
 
 ---
 
-## Supabase 업그레이드 계획 (Ch8 이후)
+## Supabase 데이터 모델 (Ch8 이후 실제 적용)
+
+### profiles 테이블
+```sql
+create table profiles (
+  id uuid references auth.users(id) on delete cascade primary key,
+  username text,
+  avatar_url text,
+  role text not null default 'user',
+  created_at timestamptz default now()
+);
+```
+
+### posts 테이블
+```sql
+create table posts (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references profiles(id) on delete cascade not null,
+  title text not null,
+  content text not null,
+  created_at timestamptz default now()
+);
+```
+
+```ts
+// lib/posts.ts
+type Post = {
+  id: string
+  user_id: string
+  title: string
+  content: string
+  created_at: string
+}
+```
+
+---
+
+## 보안 계층 (Ch11)
+
+| 위치 | 예시 | 목적 |
+|------|------|------|
+| React UI | `user.id === post.user_id`일 때 수정/삭제 버튼 표시 | UX (편의) |
+| Supabase RLS | `auth.uid() = user_id` 정책 | 보안 (강제) |
+
+- 클라이언트 분기는 보안이 아님 — 버튼을 숨겨도 직접 요청으로 우회 가능
+- RLS는 PostgreSQL이 직접 검사하므로 우회 불가
+- service_role 키는 클라이언트 코드 어디에도 사용 금지
+
+### posts 테이블 RLS 정책 (Ch11 적용 예정)
+
+| 작업 | 권한 | 조건 |
+|------|------|------|
+| SELECT | 누구나 | `true` |
+| INSERT | 로그인 사용자만 | `WITH CHECK (auth.uid() = user_id)` |
+| UPDATE | 작성자만 | `USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id)` |
+| DELETE | 작성자만 | `USING (auth.uid() = user_id)` |
+
+---
+
+## 인증 흐름 (Ch9)
 
 ```
-현재: localStorage.setItem / getItem  (ReviewForm.tsx)
-↓ Ch8 이후
-Supabase: reviews 테이블 insert / select
+사용자 → /login 또는 /signup
+→ Supabase Auth (이메일/비밀번호)
+→ @supabase/ssr 쿠키 세션 저장
+→ contexts/AuthContext.tsx로 전역 공유
+→ proxy.ts: /posts/new 미인증 접근 시 /login 리다이렉트
 ```
 
-Review interface 구조를 미리 Supabase 테이블 구조와 동일하게 설계해두었으므로
-ReviewForm.tsx의 저장/불러오기 로직만 교체하면 된다.
+- Next.js 16에서 middleware.ts deprecated → proxy.ts + `export function proxy()` 사용
+- 세션 쿠키: `@supabase/ssr` — SSR 환경에서 안전하게 관리
+- 클라이언트에는 anon 키만 (NEXT_PUBLIC_SUPABASE_ANON_KEY)
+
+---
+
+## 패키지 버전
+
+| 패키지 | 교재 기준 | 현재 설치 |
+|--------|-----------|-----------|
+| `next` | 16.2.1 | 16.2.1 |
+| `react` | 19.2.4 | 19.2.4 |
+| `@supabase/supabase-js` | 2.47.12 | ^2.105.1 |
+| `@supabase/ssr` | 0.5.2 | ^0.10.2 |
+| `tailwindcss` | 4 | ^4 |

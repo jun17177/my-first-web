@@ -1,11 +1,10 @@
-
-
 ## Tech Stack
 
 - Next.js 16.2.1 (App Router only)
 - React 19.2.4
 - Tailwind CSS 4
 - shadcn/ui (components/ui/ 경로에 설치됨)
+- Supabase (Auth + PostgreSQL, @supabase/supabase-js ^2.105.1, @supabase/ssr ^0.10.2)
 
 ## Coding Conventions
 
@@ -13,7 +12,7 @@
 - Use Tailwind CSS for styling.
 - Keep components simple and easy to verify.
 - Prefer files inside `app/` for routes.
-- Data lives in `lib/` as static TypeScript arrays — no DB at this stage.
+- Static data lives in `lib/` as TypeScript arrays; Supabase data goes through `lib/supabase/`.
 
 ## Design Tokens
 
@@ -35,6 +34,15 @@
 - 팀 고유 컬러(hex)는 반드시 `style={{ backgroundColor: color }}` — Tailwind 클래스 사용 금지
 - localStorage 접근은 반드시 `useEffect` 안에서 (SSR 환경에서 window 직접 접근 금지)
 
+## Security Rules (Ch11 이후)
+
+- 보안은 클라이언트 if문이 아니라 RLS가 담당한다 — UI 분기는 UX 편의일 뿐
+- RLS SQL은 반드시 마이그레이션 파일로 남긴다 (SQL Editor 직접 실행 금지)
+  - `npx supabase migration new` → 파일 편집 → `npx supabase db push`
+- service_role 키는 클라이언트 코드 어디에도 사용 금지 (anon 키만 허용)
+- INSERT 정책에는 반드시 `WITH CHECK (auth.uid() = user_id)` 포함
+- UPDATE 정책에는 `USING`과 `WITH CHECK` 둘 다 포함
+
 ## Known AI Mistakes
 
 - Do not use `next/router`; use `next/navigation` when navigation is needed.
@@ -43,3 +51,8 @@
 - Do not use `tailwind.config.js`; Tailwind CSS 4 uses `@import "tailwindcss"` in globals.css.
 - Do not use `const { id } = params`; use `const { id } = await params` (Next.js 15+).
 - Do not access `localStorage` directly outside `useEffect`; it breaks SSR.
+- Do not use `middleware.ts`; this project uses `proxy.ts` (Next.js 16).
+- Do not use `auth.signIn()`; use `signInWithPassword()` from @supabase/supabase-js v2.
+- Do not import `createClient` from `@supabase/supabase-js` directly in browser components; use `lib/supabase/client.ts`.
+- Do not run RLS SQL in the Supabase SQL Editor; always use CLI migration.
+- Do not use `service_role` key in any client-side or NEXT_PUBLIC_ environment variable.
