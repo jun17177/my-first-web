@@ -112,7 +112,7 @@ lib/
 supabase/
 └── migrations/
     ├── 20260504045416_create_tables.sql   # profiles + posts 테이블 생성
-    └── <timestamp>_add_posts_rls.sql      # Ch11: posts RLS 정책 (예정)
+    └── 20260520041529_add_posts_rls.sql   # Ch11: posts RLS 정책 (적용 완료)
 
 proxy.ts                    # /posts/new 보호 라우트 (Next.js 16 proxy)
 ```
@@ -304,7 +304,7 @@ type Post = {
 - RLS는 PostgreSQL이 직접 검사하므로 우회 불가
 - service_role 키는 클라이언트 코드 어디에도 사용 금지
 
-### posts 테이블 RLS 정책 (Ch11 적용 예정)
+### posts 테이블 RLS 정책 (Ch11 적용 완료 — 2026-05-20)
 
 | 작업 | 권한 | 조건 |
 |------|------|------|

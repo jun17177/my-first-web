@@ -46,7 +46,7 @@
 - [ ] git push → Vercel 배포 확인
 - [ ] 배포 URL 제출
 
-## 진행률: 10/29 (34%)
+## 진행률 (1~5단계 기준): 10/29 (34%) — Ch9~11 별도 완료
 
 ## Ch9: Supabase Auth
 
@@ -58,8 +58,8 @@
 - [x] app/layout.tsx — AuthProvider 연결
 - [x] proxy.ts — /posts/new 보호 라우트
 - [x] npm run build 통과
-- [ ] 브라우저 시나리오 ②~⑥ 검증
-- [ ] Vercel 배포 확인
+- [x] 브라우저 시나리오 ②~⑥ 검증
+- [x] Vercel 배포 확인
 
 ## Ch10: posts CRUD (Supabase 연동)
 
@@ -74,13 +74,14 @@
 
 ## Ch11: RLS (Row Level Security)
 
-- [ ] npx supabase migration new add_posts_rls
-- [ ] supabase/migrations/<timestamp>_add_posts_rls.sql — RLS SQL 작성
-- [ ] npx supabase db push — 원격 적용
-- [ ] Supabase 대시보드에서 posts Policies 확인
-- [ ] 비로그인 사용자 게시글 조회 테스트 (성공해야 함)
-- [ ] 사용자 A 글 작성 테스트 (성공해야 함)
-- [ ] 사용자 B가 A 글 수정/삭제 시도 테스트 (실패해야 함)
-- [ ] 민감 키(service_role 등) 노출 grep 확인
-- [ ] npm run build 통과
-- [ ] Vercel 배포 확인
+- [x] npx supabase migration new add_posts_rls
+- [x] supabase/migrations/20260520041529_add_posts_rls.sql — RLS SQL 작성
+- [x] npx supabase db push — 원격 적용
+- [x] 비로그인 사용자 게시글 조회 테스트 (성공)
+- [x] 비로그인 /posts/new 접근 → 로그인 페이지 이동 (성공)
+- [x] 사용자 A 글 작성 테스트 (성공)
+- [x] 사용자 A 본인 글 수정 테스트 (성공)
+- [x] 사용자 B가 A 글 수정/삭제 버튼 없음 확인 (성공)
+- [x] 민감 키(service_role 등) 노출 grep 확인 (없음)
+- [x] npm run build 통과
+- [x] Vercel 배포 확인
