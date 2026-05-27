@@ -37,5 +37,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/posts/new"],
+  matcher: ["/posts/new", "/posts/:id/edit"],
 };

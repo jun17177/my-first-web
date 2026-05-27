@@ -5,8 +5,6 @@ export function getErrorMessage(error: unknown): string {
   if (typeof error === "object" && error !== null) {
     if ("message" in error) message = String((error as { message: unknown }).message);
     if ("code" in error) code = String((error as { code: unknown }).code);
-  } else if (error instanceof Error) {
-    message = error.message;
   }
 
   const text = `${code} ${message}`.toLowerCase();

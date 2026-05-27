@@ -14,6 +14,7 @@ type Props = {
 export default function PostsList({ initialPosts }: Props) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [query, setQuery] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const { user } = useAuth();
 
   const filteredPosts = posts.filter((post) =>
@@ -22,14 +23,20 @@ export default function PostsList({ initialPosts }: Props) {
 
   async function handleDelete(id: string) {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    setDeleteError("");
     const { error } = await deletePost(id);
-    if (!error) {
-      setPosts(posts.filter((post) => post.id !== id));
+    if (error) {
+      setDeleteError("삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      return;
     }
+    setPosts(posts.filter((post) => post.id !== id));
   }
 
   return (
     <div>
+      {deleteError && (
+        <p className="mb-4 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">{deleteError}</p>
+      )}
       <div className="mb-6">
         <SearchBar query={query} onSearch={setQuery} />
       </div>
