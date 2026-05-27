@@ -3,7 +3,7 @@
 ## 현재 상태
 
 - 마지막 작업일: 2026-05-27
-- 완료된 작업: Ch9 Supabase Auth, Ch10 posts CRUD, Ch11 posts RLS, Ch12 에러 처리 + 로딩 UX
+- 완료된 작업: Ch9 Supabase Auth, Ch10 posts CRUD, Ch11 posts RLS, Ch12 에러 처리 + 로딩 UX, Ch13 E2E 테스트 + 코드리뷰 + 배포 검증
 - 진행 중: 없음
 - 미착수: 없음
 
@@ -69,3 +69,12 @@
 - lib/error-message.ts — Supabase/네트워크 에러 → 사용자 친화 메시지 변환 유틸
 - app/login/page.tsx, app/signup/page.tsx — getErrorMessage 적용, 서버 에러 원문 console.error로 격리
 - npm run build 통과, 브라우저 검증 완료
+
+## Ch13 추가 사항 (2026-05-27 완료)
+
+- Playwright E2E 테스트 2개 작성 (tests/auth-crud.spec.ts) — 행복/거절 경로 모두 통과
+- playwright.config.ts: baseURL, webServer, dotenv(.env.local) 설정
+- 코드리뷰 수정: proxy.ts matcher 보완, PostsList 삭제 오류 피드백, error-message.ts dead code 제거
+- supabase/migrations/20260527045202_add_profile_trigger.sql — 신규 가입 시 profiles 자동 생성 트리거
+- Vercel 배포 URL 수동 검증 6개 시나리오 전부 통과
+- 검증 보고서: docs/report-ch13.md

@@ -100,3 +100,15 @@
 - [x] app/signup/page.tsx — getErrorMessage 적용
 - [x] npm run build 통과
 - [x] 브라우저 시나리오 검증 완료
+
+## Ch13: E2E 테스트 + 코드리뷰 + 배포 검증
+
+- [x] Playwright 설치 (npm init playwright@latest)
+- [x] playwright.config.ts 설정 (baseURL, webServer, dotenv)
+- [x] tests/auth-crud.spec.ts — 행복 경로 + 거절 경로 테스트
+- [x] npx playwright test 통과 (2 passed)
+- [x] 코드리뷰 수정: proxy.ts matcher, PostsList 삭제 오류 피드백, error-message.ts dead code
+- [x] supabase/migrations/20260527045202_add_profile_trigger.sql — profiles 자동 생성 트리거
+- [x] Vercel 환경변수 확인 (NEXT_PUBLIC_SUPABASE_URL, ANON_KEY — Production 포함 전 환경)
+- [x] Vercel 배포 URL 수동 검증 6개 시나리오 통과
+- [x] 검증 보고서 작성 (docs/report-ch13.md)
