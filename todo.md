@@ -85,3 +85,18 @@
 - [x] 민감 키(service_role 등) 노출 grep 확인 (없음)
 - [x] npm run build 통과
 - [x] Vercel 배포 확인
+
+## Ch12: 에러 처리 + 로딩 UX
+
+- [x] app/error.tsx — 앱 전체 에러 안전망
+- [x] app/loading.tsx — 앱 전체 로딩 스피너
+- [x] app/posts/loading.tsx — 게시글 목록 스켈레톤
+- [x] app/posts/[id]/loading.tsx — 게시글 상세 스켈레톤
+- [x] app/posts/page.tsx — 빈 상태 처리
+- [x] app/posts/[id]/page.tsx — 로딩 스켈레톤 추가
+- [x] components/PostForm.tsx — 클라이언트 유효성 검증 (제목 2자↑, 내용 10자↑)
+- [x] lib/error-message.ts — 에러 메시지 변환 유틸
+- [x] app/login/page.tsx — getErrorMessage 적용
+- [x] app/signup/page.tsx — getErrorMessage 적용
+- [x] npm run build 통과
+- [x] 브라우저 시나리오 검증 완료

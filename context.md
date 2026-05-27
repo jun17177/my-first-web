@@ -2,8 +2,8 @@
 
 ## 현재 상태
 
-- 마지막 작업일: 2026-05-20
-- 완료된 작업: Ch9 Supabase Auth, Ch10 posts CRUD, Ch11 posts RLS
+- 마지막 작업일: 2026-05-27
+- 완료된 작업: Ch9 Supabase Auth, Ch10 posts CRUD, Ch11 posts RLS, Ch12 에러 처리 + 로딩 UX
 - 진행 중: 없음
 - 미착수: 없음
 
@@ -56,3 +56,16 @@
 - 브라우저 우회 테스트 6개 시나리오 전부 통과
 - npm run build 통과, Vercel 배포 완료
 - service_role 키 노출 없음 (grep 확인)
+
+## Ch12 추가 사항 (2026-05-27 완료)
+
+- app/error.tsx — 앱 전체 에러 안전망 (reset() 버튼 포함)
+- app/loading.tsx — 앱 전체 로딩 스피너
+- app/posts/loading.tsx — 게시글 목록 스켈레톤 (animate-pulse 카드 3개)
+- app/posts/[id]/loading.tsx — 게시글 상세 스켈레톤
+- app/posts/page.tsx — 빈 상태 "아직 게시글이 없습니다." 처리
+- app/posts/[id]/page.tsx — 로딩 스켈레톤 추가
+- components/PostForm.tsx — 클라이언트 유효성 검증 (제목 2자↑, 내용 10자↑), 필드별 에러 표시
+- lib/error-message.ts — Supabase/네트워크 에러 → 사용자 친화 메시지 변환 유틸
+- app/login/page.tsx, app/signup/page.tsx — getErrorMessage 적용, 서버 에러 원문 console.error로 격리
+- npm run build 통과, 브라우저 검증 완료

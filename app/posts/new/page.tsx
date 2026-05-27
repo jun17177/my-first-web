@@ -22,7 +22,8 @@ export default function NewPostPage() {
 
     const { error: postError } = await createPost(title, content, user.id);
     if (postError) {
-      setError(postError.message);
+      console.error(postError);
+      setError("잠시 후 다시 시도해주세요.");
       setLoading(false);
       return;
     }

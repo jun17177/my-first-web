@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUpWithEmail } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -22,7 +23,8 @@ export default function SignupPage() {
     const { error } = await signUpWithEmail(email, password, name);
 
     if (error) {
-      setError(error.message);
+      console.error(error);
+      setError(getErrorMessage(error));
       setLoading(false);
       return;
     }

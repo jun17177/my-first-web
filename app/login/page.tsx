@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signInWithEmail } from "@/lib/auth";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +21,8 @@ export default function LoginPage() {
     const { error } = await signInWithEmail(email, password);
 
     if (error) {
-      setError(error.message);
+      console.error(error);
+      setError(getErrorMessage(error));
       setLoading(false);
       return;
     }

@@ -31,16 +31,13 @@ export default function EditPostPage() {
   }, [id, user, authLoading]);
 
   async function handleSubmit(title: string, content: string) {
-    if (!title.trim()) {
-      setError("제목을 입력해주세요.");
-      return;
-    }
     setError("");
     setSaving(true);
 
     const { error: updateError } = await updatePost(id, title, content);
     if (updateError) {
-      setError(updateError.message);
+      console.error(updateError);
+      setError("잠시 후 다시 시도해주세요.");
       setSaving(false);
       return;
     }

@@ -23,9 +23,27 @@ export default function PostForm({
 }: Props) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
 
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
+
+    let valid = true;
+    if (title.trim().length < 2) {
+      setTitleError("제목을 2자 이상 입력해주세요.");
+      valid = false;
+    } else {
+      setTitleError("");
+    }
+    if (content.trim().length < 10) {
+      setContentError("내용을 10자 이상 입력해주세요.");
+      valid = false;
+    } else {
+      setContentError("");
+    }
+    if (!valid) return;
+
     await onSubmit(title, content);
   }
 
@@ -42,10 +60,11 @@ export default function PostForm({
           id="title"
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => { setTitle(e.target.value); setTitleError(""); }}
           placeholder="제목을 입력하세요"
           className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-gray-900"
         />
+        {titleError && <p className="text-sm text-red-600">{titleError}</p>}
       </div>
 
       <div className="space-y-2">
@@ -55,11 +74,12 @@ export default function PostForm({
         <textarea
           id="content"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => { setContent(e.target.value); setContentError(""); }}
           placeholder="내용을 입력하세요"
           rows={8}
           className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-gray-900"
         />
+        {contentError && <p className="text-sm text-red-600">{contentError}</p>}
       </div>
 
       {error && (

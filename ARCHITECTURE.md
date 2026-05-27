@@ -62,18 +62,22 @@ Next.js App Router + TypeScript + Tailwind CSS 4 기반.
 app/
 ├── layout.tsx              # 공통 레이아웃 — Header + main + Footer + AuthProvider
 ├── page.tsx                # 홈 — Server Component
+├── error.tsx               # 앱 전체 에러 안전망 — Client Component (reset() 버튼)
+├── loading.tsx             # 앱 전체 로딩 스피너
 ├── login/
-│   └── page.tsx            # 로그인 — Client Component
+│   └── page.tsx            # 로그인 — Client Component (getErrorMessage 적용)
 ├── signup/
-│   └── page.tsx            # 회원가입 — Client Component
+│   └── page.tsx            # 회원가입 — Client Component (getErrorMessage 적용)
 ├── posts/
-│   ├── page.tsx            # 게시글 목록 — Client Component (Supabase select)
+│   ├── page.tsx            # 게시글 목록 — Client Component (Supabase select, 빈 상태 처리)
+│   ├── loading.tsx         # 게시글 목록 스켈레톤 (animate-pulse 카드 3개)
 │   ├── PostsList.tsx       # 목록 컴포넌트 (작성자 UI 분기)
 │   ├── SearchBar.tsx       # 검색 컴포넌트
 │   ├── new/
 │   │   └── page.tsx        # 게시글 작성 — Client Component (Supabase insert)
 │   └── [id]/
-│       ├── page.tsx        # 게시글 상세 — Client Component (Supabase select)
+│       ├── page.tsx        # 게시글 상세 — Client Component (Supabase select, 스켈레톤)
+│       ├── loading.tsx     # 게시글 상세 스켈레톤
 │       └── edit/
 │           └── page.tsx    # 게시글 수정 — Client Component (Supabase update)
 ├── drivers/
@@ -101,6 +105,7 @@ contexts/
 
 lib/
 ├── auth.ts                 # signInWithEmail, signUpWithEmail, signOut
+├── error-message.ts        # getErrorMessage — Supabase/네트워크 에러 → 사용자 친화 메시지
 ├── supabase/
 │   ├── client.ts           # createBrowserClient (anon key만 사용)
 │   └── posts.ts            # getPosts, getPost, createPost, updatePost, deletePost
