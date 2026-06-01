@@ -6,6 +6,8 @@ import Link from "next/link";
 import type { Post } from "@/lib/posts";
 import { getPost, deletePost } from "@/lib/supabase/posts";
 import { useAuth } from "@/contexts/AuthContext";
+import LikeButton from "./LikeButton";
+import Comments from "./Comments";
 
 export default function PostPage() {
   const { id } = useParams<{ id: string }>();
@@ -82,6 +84,12 @@ export default function PostPage() {
           {post.title}
         </h1>
 
+        {post.image_url && (
+          <div className="mt-8 overflow-hidden rounded-xl border border-gray-200">
+            <img src={post.image_url} alt="게시글 이미지" className="w-full object-cover max-h-96" />
+          </div>
+        )}
+
         <div className="mt-8 space-y-4 text-base leading-7 text-gray-700">
           <p>{post.content}</p>
         </div>
@@ -89,6 +97,12 @@ export default function PostPage() {
         {deleteError && (
           <p className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">{deleteError}</p>
         )}
+
+        <div className="mt-8 flex items-center gap-4">
+          <LikeButton postId={post.id} />
+        </div>
+
+        <Comments postId={post.id} />
 
         <div className="mt-10 border-t border-gray-200 pt-6">
           <Link

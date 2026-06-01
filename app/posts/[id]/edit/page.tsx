@@ -12,6 +12,7 @@ export default function EditPostPage() {
   const { user, loading: authLoading } = useAuth();
   const [initialTitle, setInitialTitle] = useState("");
   const [initialContent, setInitialContent] = useState("");
+  const [initialImageUrl, setInitialImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -26,15 +27,16 @@ export default function EditPostPage() {
       }
       setInitialTitle(data.title);
       setInitialContent(data.content);
+      setInitialImageUrl(data.image_url ?? null);
       setLoading(false);
     });
   }, [id, user, authLoading]);
 
-  async function handleSubmit(title: string, content: string) {
+  async function handleSubmit(title: string, content: string, imageUrl?: string | null) {
     setError("");
     setSaving(true);
 
-    const { error: updateError } = await updatePost(id, title, content);
+    const { error: updateError } = await updatePost(id, title, content, imageUrl);
     if (updateError) {
       console.error(updateError);
       setError("잠시 후 다시 시도해주세요.");
@@ -59,6 +61,7 @@ export default function EditPostPage() {
       <PostForm
         initialTitle={initialTitle}
         initialContent={initialContent}
+        initialImageUrl={initialImageUrl}
         onSubmit={handleSubmit}
         loading={saving}
         error={error}

@@ -12,7 +12,7 @@ export default function NewPostPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(title: string, content: string) {
+  async function handleSubmit(title: string, content: string, imageUrl?: string | null) {
     if (!user) {
       setError("로그인이 필요합니다.");
       return;
@@ -20,7 +20,7 @@ export default function NewPostPage() {
     setError("");
     setLoading(true);
 
-    const { error: postError } = await createPost(title, content, user.id);
+    const { error: postError } = await createPost(title, content, user.id, imageUrl);
     if (postError) {
       console.error(postError);
       setError("잠시 후 다시 시도해주세요.");

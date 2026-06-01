@@ -44,6 +44,12 @@ export default function HeaderNav() {
               >
                 새 글 쓰기
               </Link>
+              <Link
+                href="/profile"
+                className="rounded-full px-4 py-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
+              >
+                프로필
+              </Link>
               <button
                 onClick={handleSignOut}
                 className="rounded-full bg-gray-900 px-4 py-2 text-white transition hover:bg-gray-700"
