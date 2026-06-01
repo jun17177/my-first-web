@@ -8,8 +8,8 @@ import HeaderNav from "@/components/HeaderNav";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "내 블로그",
-  description: "내 블로그입니다.",
+  title: "F1 Fan Page — 2025 시즌",
+  description: "2025 F1 시즌 드라이버·팀·레이스 일정을 소개하는 팬 사이트",
 };
 
 export default function RootLayout({
@@ -19,14 +19,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={cn("font-sans", geist.variable)}>
-      <body className="bg-gray-50 text-gray-900" suppressHydrationWarning>
+      <body className="bg-[#f5f5f5] text-gray-900" suppressHydrationWarning>
         <AuthProvider>
           <HeaderNav />
-          <main className="mx-auto max-w-4xl px-6 py-8">
+          <main className="mx-auto max-w-6xl px-4 py-10">
             {children}
           </main>
-          <footer className="border-t border-gray-200 px-6 py-5 text-center text-sm text-gray-500">
-            © 2026 내 블로그
+          <footer className="bg-[#1a1a1a] text-white mt-16">
+            <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-lg font-bold tracking-tight">F1 Fan Page</p>
+              <p className="text-sm text-gray-400">© 2025 F1 Fan Page. All rights reserved.</p>
+            </div>
           </footer>
         </AuthProvider>
       </body>
