@@ -44,13 +44,13 @@ export default function ProfilePage() {
     setSaving(true);
     setError("");
     setSuccess(false);
-    const { error } = await updateProfile(user.id, { username: username.trim() || null });
+    const { data, error } = await updateProfile(user.id, { username: username.trim() || null });
     if (error) {
       setError(getErrorMessage(error));
       setSaving(false);
       return;
     }
-    setProfile((prev) => prev ? { ...prev, username: username.trim() || null } : prev);
+    if (data) setProfile(data as Profile);
     setEditing(false);
     setSuccess(true);
     setSaving(false);
@@ -110,7 +110,7 @@ export default function ProfilePage() {
         {success && <p className="mt-3 text-sm text-green-600">저장되었습니다.</p>}
 
         <p className="mt-4 text-xs text-gray-400">
-          가입일: {profile ? new Date(profile.created_at).toLocaleDateString("ko-KR") : "-"}
+          가입일: {new Date(user.created_at).toLocaleDateString("ko-KR")}
         </p>
       </div>
 

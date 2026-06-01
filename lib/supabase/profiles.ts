@@ -21,5 +21,5 @@ export async function getProfile(userId: string) {
 
 export async function updateProfile(userId: string, updates: { username?: string | null; avatar_url?: string | null }) {
   const supabase = getClient();
-  return supabase.from("profiles").update(updates).eq("id", userId);
+  return supabase.from("profiles").update(updates).eq("id", userId).select().single();
 }
