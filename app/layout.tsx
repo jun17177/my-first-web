@@ -28,7 +28,7 @@ export default function RootLayout({
           <footer className="bg-[#1a1a1a] text-white mt-16">
             <div className="mx-auto max-w-6xl px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-lg font-bold tracking-tight">F1 Fan Page</p>
-              <p className="text-sm text-gray-400">© 2025 F1 Fan Page. All rights reserved.</p>
+              <p className="text-sm text-gray-400">© 2026 F1 Fan Page. All rights reserved.</p>
             </div>
           </footer>
         </AuthProvider>
