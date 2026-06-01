@@ -15,12 +15,12 @@ export default function Home() {
     <div className="space-y-16">
       {/* 히어로 */}
       <section className="rounded-2xl bg-[#1a1a1a] px-8 py-16 text-white text-center">
-        <p className="text-red-500 font-semibold text-sm tracking-widest uppercase mb-3">2025 Season</p>
+        <p className="text-red-500 font-semibold text-sm tracking-widest uppercase mb-3">2026 Season</p>
         <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
           Formula 1<br />Fan Page
         </h1>
         <p className="text-gray-400 max-w-md mx-auto mb-8 text-sm leading-relaxed">
-          2025 F1 시즌의 드라이버·팀·레이스 일정을 한눈에. 경기 의견도 남겨보세요.
+          2026 F1 시즌의 드라이버·팀·레이스 일정을 한눈에. 경기 의견도 남겨보세요.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link href="/drivers" className="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold hover:bg-red-700 transition">

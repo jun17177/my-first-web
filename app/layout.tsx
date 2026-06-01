@@ -8,8 +8,8 @@ import HeaderNav from "@/components/HeaderNav";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "F1 Fan Page — 2025 시즌",
-  description: "2025 F1 시즌 드라이버·팀·레이스 일정을 소개하는 팬 사이트",
+  title: "F1 Fan Page — 2026 시즌",
+  description: "2026 F1 시즌 드라이버·팀·레이스 일정을 소개하는 팬 사이트",
 };
 
 export default function RootLayout({
