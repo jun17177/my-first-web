@@ -5,11 +5,11 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 const NAV_LINKS = [
-  { href: "/drivers", label: "Drivers" },
-  { href: "/teams", label: "Teams" },
-  { href: "/calendar", label: "Calendar" },
-  { href: "/reviews", label: "Reviews" },
-  { href: "/posts", label: "Blog" },
+  { href: "/drivers", label: "드라이버" },
+  { href: "/teams", label: "팀" },
+  { href: "/calendar", label: "캘린더" },
+  { href: "/reviews", label: "리뷰" },
+  { href: "/posts", label: "게시물" },
 ];
 
 export default function HeaderNav() {
