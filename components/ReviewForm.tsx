@@ -70,6 +70,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   const fetchReviews = useCallback(async () => {
     const { data } = await getReviewsByRace(race.id);
@@ -93,7 +94,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
     if (comment.trim().length < 5) { setError("의견을 5자 이상 입력해주세요."); return; }
     setError("");
     setSubmitting(true);
-    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id, myUsername);
+    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id, isAnonymous ? null : myUsername);
     if (insertError) {
       setError("저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
       setSubmitting(false);
@@ -186,6 +187,21 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-gray-900 transition"
             />
           </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              className="w-4 h-4 rounded accent-gray-900"
+            />
+            <span className="text-sm text-gray-600">
+              익명으로 작성
+              {!isAnonymous && myUsername && (
+                <span className="ml-1 text-gray-400">({myUsername} 으로 표시됩니다)</span>
+              )}
+            </span>
+          </label>
+
           {error && <p className="text-sm text-red-500">{error}</p>}
           <button type="submit" disabled={submitting}
             className="rounded-full bg-[#1a1a1a] px-6 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700 disabled:opacity-50">
