@@ -4,9 +4,9 @@ export interface ReviewReply {
   id: string;
   review_id: string;
   user_id: string;
+  username: string | null;
   content: string;
   created_at: string;
-  profiles: { username: string | null } | null;
 }
 
 export interface Review {
@@ -17,8 +17,8 @@ export interface Review {
   rating: number;
   comment: string;
   user_id: string;
+  username: string | null;
   created_at: string;
-  profiles: { username: string | null } | null;
   review_likes: { id: string; user_id: string }[];
   review_replies: ReviewReply[];
 }
@@ -27,7 +27,7 @@ export async function getReviewsByRace(raceId: number) {
   const supabase = createClient();
   return supabase
     .from("reviews")
-    .select("*, profiles(username), review_likes(id, user_id), review_replies(*, profiles(username))")
+    .select("*, review_likes(id, user_id), review_replies(*)")
     .eq("race_id", raceId)
     .order("created_at", { ascending: false });
 }
@@ -38,7 +38,8 @@ export async function createReview(
   driverName: string,
   rating: number,
   comment: string,
-  userId: string
+  userId: string,
+  username: string | null
 ) {
   const supabase = createClient();
   return supabase.from("reviews").insert({
@@ -48,6 +49,7 @@ export async function createReview(
     rating,
     comment,
     user_id: userId,
+    username,
   });
 }
 
@@ -66,9 +68,9 @@ export async function removeReviewLike(reviewId: string, userId: string) {
   return supabase.from("review_likes").delete().eq("review_id", reviewId).eq("user_id", userId);
 }
 
-export async function createReply(reviewId: string, userId: string, content: string) {
+export async function createReply(reviewId: string, userId: string, username: string | null, content: string) {
   const supabase = createClient();
-  return supabase.from("review_replies").insert({ review_id: reviewId, user_id: userId, content });
+  return supabase.from("review_replies").insert({ review_id: reviewId, user_id: userId, username, content });
 }
 
 export async function deleteReply(id: string) {

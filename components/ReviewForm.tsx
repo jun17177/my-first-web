@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { races, type Race } from "@/lib/races";
 import { drivers } from "@/lib/drivers";
 import { useAuth } from "@/contexts/AuthContext";
+import { getProfile } from "@/lib/supabase/profiles";
 import {
   getReviewsByRace, createReview, deleteReview,
   addReviewLike, removeReviewLike,
@@ -63,6 +64,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
   const { user } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [myUsername, setMyUsername] = useState<string | null>(null);
   const [driverName, setDriverName] = useState(drivers[0].name);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -77,6 +79,13 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
 
   useEffect(() => { fetchReviews(); }, [fetchReviews]);
 
+  useEffect(() => {
+    if (!user) return;
+    getProfile(user.id).then(({ data }) => {
+      if (data) setMyUsername(data.username ?? null);
+    });
+  }, [user]);
+
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!user) return;
@@ -84,7 +93,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
     if (comment.trim().length < 5) { setError("의견을 5자 이상 입력해주세요."); return; }
     setError("");
     setSubmitting(true);
-    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id);
+    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id, myUsername);
     if (insertError) {
       setError("저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
       setSubmitting(false);
@@ -115,7 +124,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
 
   async function handleAddReply(reviewId: string, content: string) {
     if (!user) return;
-    await createReply(reviewId, user.id, content);
+    await createReply(reviewId, user.id, myUsername, content);
     await fetchReviews();
   }
 
@@ -246,7 +255,7 @@ function ReviewCard({ review, currentUserId, onDelete, onToggleLike, onAddReply,
       <div className="flex items-start justify-between gap-2 mb-1">
         <div>
           <span className="font-semibold text-gray-900 text-sm">
-            {review.profiles?.username ?? "익명"}
+            {review.username ?? "익명"}
           </span>
           <span className="ml-2 text-xs text-gray-400">
             {new Date(review.created_at).toLocaleDateString("ko-KR")}
@@ -294,7 +303,7 @@ function ReviewCard({ review, currentUserId, onDelete, onToggleLike, onAddReply,
             <div key={rep.id} className="flex items-start justify-between gap-2">
               <div>
                 <span className="text-xs font-medium text-gray-600">
-                  {rep.profiles?.username ?? "익명"}
+                  {rep.username ?? "익명"}
                 </span>
                 <p className="text-sm text-gray-700 mt-0.5">{rep.content}</p>
                 <p className="text-xs text-gray-400 mt-0.5">
