@@ -123,9 +123,9 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
     await fetchReviews();
   }
 
-  async function handleAddReply(reviewId: string, content: string) {
+  async function handleAddReply(reviewId: string, content: string, anonymous: boolean) {
     if (!user) return;
-    await createReply(reviewId, user.id, myUsername, content);
+    await createReply(reviewId, user.id, anonymous ? null : myUsername, content);
     await fetchReviews();
   }
 
@@ -234,7 +234,8 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
               currentUserId={user?.id}
               onDelete={() => handleDeleteReview(r.id)}
               onToggleLike={() => handleToggleLike(r.id)}
-              onAddReply={(content) => handleAddReply(r.id, content)}
+              myUsername={myUsername}
+              onAddReply={(content: string, anonymous: boolean) => { handleAddReply(r.id, content, anonymous); }}
               onDeleteReply={handleDeleteReply}
             />
           ))}
@@ -246,23 +247,26 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
   );
 }
 
-function ReviewCard({ review, currentUserId, onDelete, onToggleLike, onAddReply, onDeleteReply }: {
+function ReviewCard({ review, currentUserId, myUsername, onDelete, onToggleLike, onAddReply, onDeleteReply }: {
   review: Review;
   currentUserId?: string;
+  myUsername: string | null;
   onDelete: () => void;
   onToggleLike: () => void;
-  onAddReply: (content: string) => void;
+  onAddReply: (content: string, anonymous: boolean) => void;
   onDeleteReply: (replyId: string) => void;
 }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState("");
+  const [isReplyAnonymous, setIsReplyAnonymous] = useState(false);
   const liked = currentUserId ? review.review_likes.some((l) => l.user_id === currentUserId) : false;
 
   function handleReplySubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!replyContent.trim()) return;
-    onAddReply(replyContent.trim());
+    onAddReply(replyContent.trim(), isReplyAnonymous);
     setReplyContent("");
+    setIsReplyAnonymous(false);
     setShowReplyForm(false);
   }
 
@@ -336,17 +340,33 @@ function ReviewCard({ review, currentUserId, onDelete, onToggleLike, onAddReply,
 
       {/* 대댓글 입력 폼 */}
       {showReplyForm && (
-        <form onSubmit={handleReplySubmit} className="mt-3 ml-4 flex gap-2">
-          <input
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            placeholder="대댓글을 입력하세요..."
-            className="flex-1 rounded-xl border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-gray-900 transition"
-          />
-          <button type="submit" disabled={!replyContent.trim()}
-            className="rounded-xl bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-50">
-            등록
-          </button>
+        <form onSubmit={handleReplySubmit} className="mt-3 ml-4 space-y-2">
+          <div className="flex gap-2">
+            <input
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              placeholder="대댓글을 입력하세요..."
+              className="flex-1 rounded-xl border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-gray-900 transition"
+            />
+            <button type="submit" disabled={!replyContent.trim()}
+              className="rounded-xl bg-gray-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-50">
+              등록
+            </button>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isReplyAnonymous}
+              onChange={(e) => setIsReplyAnonymous(e.target.checked)}
+              className="w-3.5 h-3.5 rounded accent-gray-900"
+            />
+            <span className="text-xs text-gray-500">
+              익명으로 작성
+              {!isReplyAnonymous && myUsername && (
+                <span className="ml-1 text-gray-400">({myUsername} 으로 표시됩니다)</span>
+              )}
+            </span>
+          </label>
         </form>
       )}
     </div>
