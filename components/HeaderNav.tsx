@@ -51,6 +51,12 @@ export default function HeaderNav() {
           ) : user ? (
             <>
               <Link
+                href="/posts/new"
+                className="hidden sm:block rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition"
+              >
+                새 글 쓰기
+              </Link>
+              <Link
                 href="/profile"
                 className="hidden sm:block rounded-full px-3 py-1.5 text-xs text-gray-300 hover:bg-white/10 transition"
               >
