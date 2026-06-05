@@ -77,14 +77,19 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
 
   useEffect(() => { fetchReviews(); }, [fetchReviews]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!user) return;
     if (rating === 0) { setError("별점을 선택해주세요."); return; }
     if (comment.trim().length < 5) { setError("의견을 5자 이상 입력해주세요."); return; }
     setError("");
     setSubmitting(true);
-    await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id);
+    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id);
+    if (insertError) {
+      setError("저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      setSubmitting(false);
+      return;
+    }
     await fetchReviews();
     setComment("");
     setRating(0);
@@ -228,7 +233,7 @@ function ReviewCard({ review, currentUserId, onDelete, onToggleLike, onAddReply,
   const [replyContent, setReplyContent] = useState("");
   const liked = currentUserId ? review.review_likes.some((l) => l.user_id === currentUserId) : false;
 
-  function handleReplySubmit(e: React.FormEvent) {
+  function handleReplySubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!replyContent.trim()) return;
     onAddReply(replyContent.trim());
