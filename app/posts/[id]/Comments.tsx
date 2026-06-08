@@ -12,6 +12,7 @@ export default function Comments({ postId }: { postId: string }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [myUsername, setMyUsername] = useState<string | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
     getComments(postId).then(({ data }) => {
@@ -26,13 +27,13 @@ export default function Comments({ postId }: { postId: string }) {
     });
   }, [user]);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!content.trim()) return;
     if (!user) return;
     setSubmitting(true);
     setError("");
-    const { error } = await createComment(postId, user.id, myUsername, content.trim());
+    const { error } = await createComment(postId, user.id, isAnonymous ? null : myUsername, content.trim());
     if (error) {
       setError("댓글 작성에 실패했습니다.");
       setSubmitting(false);
@@ -84,20 +85,36 @@ export default function Comments({ postId }: { postId: string }) {
       </div>
 
       {user ? (
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="댓글을 입력하세요..."
-            className="flex-1 rounded-xl border border-gray-300 px-4 py-2 text-sm outline-none focus:border-gray-900 transition"
-          />
-          <button
-            type="submit"
-            disabled={submitting || !content.trim()}
-            className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:opacity-50"
-          >
-            등록
-          </button>
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="댓글을 입력하세요..."
+              className="flex-1 rounded-xl border border-gray-300 px-4 py-2 text-sm outline-none focus:border-gray-900 transition"
+            />
+            <button
+              type="submit"
+              disabled={submitting || !content.trim()}
+              className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700 disabled:opacity-50"
+            >
+              등록
+            </button>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              className="w-3.5 h-3.5 rounded accent-gray-900"
+            />
+            <span className="text-xs text-gray-500">
+              익명으로 작성
+              {!isAnonymous && myUsername && (
+                <span className="ml-1 text-gray-400">({myUsername} 으로 표시됩니다)</span>
+              )}
+            </span>
+          </label>
         </form>
       ) : (
         <p className="text-sm text-gray-400">댓글을 작성하려면 로그인하세요.</p>
