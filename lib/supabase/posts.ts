@@ -25,7 +25,10 @@ export async function uploadPostImage(file: File, userId: string): Promise<strin
   const ext = file.name.split(".").pop();
   const path = `${userId}/${Date.now()}.${ext}`;
   const { error } = await supabase.storage.from("post-images").upload(path, file);
-  if (error) return null;
+  if (error) {
+    console.error("이미지 업로드 실패:", error);
+    return null;
+  }
   const { data } = supabase.storage.from("post-images").getPublicUrl(path);
   return data.publicUrl;
 }

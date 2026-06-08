@@ -15,6 +15,7 @@ type Props = {
   onCancel?: () => void;
 };
 
+
 export default function PostForm({
   initialTitle = "",
   initialContent = "",
@@ -33,6 +34,7 @@ export default function PostForm({
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -68,8 +70,13 @@ export default function PostForm({
 
     if (imageFile && user) {
       setUploading(true);
+      setUploadError("");
       const uploaded = await uploadPostImage(imageFile, user.id);
       setUploading(false);
+      if (!uploaded) {
+        setUploadError("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+        return;
+      }
       imageUrl = uploaded;
     }
 
@@ -137,6 +144,7 @@ export default function PostForm({
             />
           </label>
         )}
+        {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
       </div>
 
       {error && (
