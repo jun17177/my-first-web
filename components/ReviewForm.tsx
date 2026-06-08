@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { races, type Race } from "@/lib/races";
 import { drivers } from "@/lib/drivers";
 import { useAuth } from "@/contexts/AuthContext";
+import { isAdmin } from "@/lib/admin";
 import { getProfile } from "@/lib/supabase/profiles";
 import {
   getReviewsByRace, createReview, deleteReview,
@@ -258,10 +259,12 @@ function ReviewCard({ review, currentUserId, myUsername, onDelete, onToggleLike,
   onAddReply: (content: string, anonymous: boolean) => void;
   onDeleteReply: (replyId: string) => void;
 }) {
+  const { user } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isReplyAnonymous, setIsReplyAnonymous] = useState(false);
   const liked = currentUserId ? review.review_likes.some((l) => l.user_id === currentUserId) : false;
+  const canDelete = currentUserId === review.user_id || isAdmin(user?.email);
 
   function handleReplySubmit(e: { preventDefault(): void }) {
     e.preventDefault();
@@ -283,7 +286,7 @@ function ReviewCard({ review, currentUserId, myUsername, onDelete, onToggleLike,
             {new Date(review.created_at).toLocaleDateString("ko-KR")}
           </span>
         </div>
-        {currentUserId === review.user_id && (
+        {canDelete && (
           <button onClick={onDelete} className="text-xs text-red-400 hover:text-red-600 transition shrink-0">삭제</button>
         )}
       </div>
@@ -332,7 +335,7 @@ function ReviewCard({ review, currentUserId, myUsername, onDelete, onToggleLike,
                   {new Date(rep.created_at).toLocaleDateString("ko-KR")}
                 </p>
               </div>
-              {currentUserId === rep.user_id && (
+              {(currentUserId === rep.user_id || isAdmin(user?.email)) && (
                 <button onClick={() => onDeleteReply(rep.id)} className="text-xs text-red-400 hover:text-red-600 shrink-0">삭제</button>
               )}
             </div>

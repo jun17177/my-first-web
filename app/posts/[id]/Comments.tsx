@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getProfile } from "@/lib/supabase/profiles";
 import { getComments, createComment, deleteComment, type Comment } from "@/lib/supabase/comments";
+import { isAdmin } from "@/lib/admin";
 
 export default function Comments({ postId }: { postId: string }) {
   const { user } = useAuth();
@@ -73,7 +74,7 @@ export default function Comments({ postId }: { postId: string }) {
                 </p>
                 <p className="text-sm text-gray-800">{c.content}</p>
               </div>
-              {user?.id === c.user_id && (
+              {(user?.id === c.user_id || isAdmin(user?.email)) && (
                 <button
                   onClick={() => handleDelete(c.id)}
                   className="shrink-0 text-xs text-red-400 hover:text-red-600 transition"

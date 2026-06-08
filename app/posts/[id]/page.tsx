@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Post } from "@/lib/posts";
 import { getPost, deletePost } from "@/lib/supabase/posts";
 import { useAuth } from "@/contexts/AuthContext";
+import { isAdmin } from "@/lib/admin";
 import LikeButton from "./LikeButton";
 import Comments from "./Comments";
 
@@ -52,8 +53,8 @@ export default function PostPage() {
 
   if (!post) return notFound();
 
-  // isOwner는 UI 표시 분기용입니다. 실제 데이터 접근 보안은 Ch11 RLS에서 처리합니다.
   const isOwner = user?.id === post.user_id;
+  const canDelete = isOwner || isAdmin(user?.email);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
@@ -62,14 +63,16 @@ export default function PostPage() {
           <span className="text-sm text-gray-500">
             {new Date(post.created_at).toLocaleDateString("ko-KR")}
           </span>
-          {isOwner && (
+          {canDelete && (
             <div className="flex items-center gap-2">
-              <Link
-                href={`/posts/${post.id}/edit`}
-                className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition hover:bg-gray-100"
-              >
-                수정
-              </Link>
+              {isOwner && (
+                <Link
+                  href={`/posts/${post.id}/edit`}
+                  className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition hover:bg-gray-100"
+                >
+                  수정
+                </Link>
+              )}
               <button
                 onClick={handleDelete}
                 className="rounded-full border border-red-300 px-4 py-1.5 text-sm text-red-600 transition hover:bg-red-50"
