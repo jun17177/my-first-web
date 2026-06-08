@@ -27,13 +27,15 @@ export default function Comments({ postId }: { postId: string }) {
     });
   }, [user]);
 
+  const displayName = myUsername ?? user?.email?.split("@")[0] ?? null;
+
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!content.trim()) return;
     if (!user) return;
     setSubmitting(true);
     setError("");
-    const { error } = await createComment(postId, user.id, isAnonymous ? null : myUsername, content.trim());
+    const { error } = await createComment(postId, user.id, isAnonymous ? null : displayName, content.trim());
     if (error) {
       setError("댓글 작성에 실패했습니다.");
       setSubmitting(false);
@@ -110,8 +112,8 @@ export default function Comments({ postId }: { postId: string }) {
             />
             <span className="text-xs text-gray-500">
               익명으로 작성
-              {!isAnonymous && myUsername && (
-                <span className="ml-1 text-gray-400">({myUsername} 으로 표시됩니다)</span>
+              {!isAnonymous && displayName && (
+                <span className="ml-1 text-gray-400">({displayName} 으로 표시됩니다)</span>
               )}
             </span>
           </label>
