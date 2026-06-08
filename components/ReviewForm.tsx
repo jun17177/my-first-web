@@ -87,6 +87,8 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
     });
   }, [user]);
 
+  const displayName = myUsername ?? user?.email?.split("@")[0] ?? null;
+
   async function handleSubmit(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!user) return;
@@ -94,7 +96,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
     if (comment.trim().length < 5) { setError("의견을 5자 이상 입력해주세요."); return; }
     setError("");
     setSubmitting(true);
-    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id, isAnonymous ? null : myUsername);
+    const { error: insertError } = await createReview(race.id, race.name, driverName, rating, comment.trim(), user.id, isAnonymous ? null : displayName);
     if (insertError) {
       setError("저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
       setSubmitting(false);
@@ -125,7 +127,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
 
   async function handleAddReply(reviewId: string, content: string, anonymous: boolean) {
     if (!user) return;
-    await createReply(reviewId, user.id, anonymous ? null : myUsername, content);
+    await createReply(reviewId, user.id, anonymous ? null : displayName, content);
     await fetchReviews();
   }
 
@@ -196,8 +198,8 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
             />
             <span className="text-sm text-gray-600">
               익명으로 작성
-              {!isAnonymous && myUsername && (
-                <span className="ml-1 text-gray-400">({myUsername} 으로 표시됩니다)</span>
+              {!isAnonymous && displayName && (
+                <span className="ml-1 text-gray-400">({displayName} 으로 표시됩니다)</span>
               )}
             </span>
           </label>
@@ -234,7 +236,7 @@ function RaceReviewPanel({ race, onBack }: { race: Race; onBack: (count: number)
               currentUserId={user?.id}
               onDelete={() => handleDeleteReview(r.id)}
               onToggleLike={() => handleToggleLike(r.id)}
-              myUsername={myUsername}
+              myUsername={displayName}
               onAddReply={(content: string, anonymous: boolean) => { handleAddReply(r.id, content, anonymous); }}
               onDeleteReply={handleDeleteReply}
             />
