@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { getProfile } from "@/lib/supabase/profiles";
 import { getComments, createComment, deleteComment, type Comment } from "@/lib/supabase/comments";
 
 export default function Comments({ postId }: { postId: string }) {
@@ -10,6 +11,7 @@ export default function Comments({ postId }: { postId: string }) {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [myUsername, setMyUsername] = useState<string | null>(null);
 
   useEffect(() => {
     getComments(postId).then(({ data }) => {
@@ -17,13 +19,20 @@ export default function Comments({ postId }: { postId: string }) {
     });
   }, [postId]);
 
+  useEffect(() => {
+    if (!user) return;
+    getProfile(user.id).then(({ data }) => {
+      if (data) setMyUsername(data.username ?? null);
+    });
+  }, [user]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim()) return;
     if (!user) return;
     setSubmitting(true);
     setError("");
-    const { error } = await createComment(postId, user.id, content.trim());
+    const { error } = await createComment(postId, user.id, myUsername, content.trim());
     if (error) {
       setError("댓글 작성에 실패했습니다.");
       setSubmitting(false);
@@ -54,7 +63,7 @@ export default function Comments({ postId }: { postId: string }) {
             <div key={c.id} className="flex items-start justify-between gap-4 rounded-xl bg-gray-50 px-4 py-3">
               <div>
                 <p className="text-xs font-medium text-gray-500 mb-1">
-                  {c.profiles?.username ?? "익명"}
+                  {c.username ?? "익명"}
                   <span className="ml-2 font-normal text-gray-400">
                     {new Date(c.created_at).toLocaleDateString("ko-KR")}
                   </span>

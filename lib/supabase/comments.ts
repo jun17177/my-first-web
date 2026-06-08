@@ -4,9 +4,9 @@ export interface Comment {
   id: string;
   post_id: string;
   user_id: string;
+  username: string | null;
   content: string;
   created_at: string;
-  profiles: { username: string | null } | null;
 }
 
 function getClient() {
@@ -20,14 +20,14 @@ export async function getComments(postId: string) {
   const supabase = getClient();
   return supabase
     .from("comments")
-    .select("*, profiles(username)")
+    .select("*")
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
 }
 
-export async function createComment(postId: string, userId: string, content: string) {
+export async function createComment(postId: string, userId: string, username: string | null, content: string) {
   const supabase = getClient();
-  return supabase.from("comments").insert({ post_id: postId, user_id: userId, content });
+  return supabase.from("comments").insert({ post_id: postId, user_id: userId, username, content });
 }
 
 export async function deleteComment(id: string) {
